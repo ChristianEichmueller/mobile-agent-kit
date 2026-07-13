@@ -44,7 +44,7 @@ Key rule across all workflows: **tests are written before implementation and are
 
 1. **Shared (this plugin):** agent roles, TDD discipline, review workflows. Identical everywhere, updated centrally.
 2. **Per project (generated, committed):** `.claude/docs/PROJECT_CONTEXT.md` + reference docs — build/test commands, test infrastructure, architecture patterns, conventions. Agents refuse to guess anything listed there.
-3. **Per project (runtime):** every agent has `memory: project` — institutional knowledge accumulates in `.claude/agent-memory/<agent>/` inside each project and never leaves it.
+3. **Per project (runtime):** every agent has `memory: project` — institutional knowledge accumulates in `.claude/agent-memory/mobile-kit-<agent>/` inside each project and never leaves it. (Plugin agents get a plugin-prefixed memory directory; a project-local override agent named `tech-lead` would use plain `.claude/agent-memory/tech-lead/` instead.)
 
 ## Updating
 
@@ -60,6 +60,16 @@ Or set `"autoUpdate": true` on the marketplace entry in `.claude/settings.json`.
 ## Overriding per project
 
 Project-level definitions always win. To customize one agent for one project, copy it to `<project>/.claude/agents/<name>.md` and edit — the plugin version is ignored for that project while the rest stay shared.
+
+## Migrating from a local-agent setup
+
+If a project previously carried these agents as local `.claude/agents/*.md` files with accumulated memory, the memory directories must be renamed to the plugin-prefixed form before removing the local definitions:
+
+```
+git mv .claude/agent-memory/<agent> .claude/agent-memory/mobile-kit-<agent>
+```
+
+(For the renamed agents, also change the base name: `android-developer` → `mobile-kit-mobile-developer`, `android-planner` → `mobile-kit-mobile-planner`.)
 
 ## License
 

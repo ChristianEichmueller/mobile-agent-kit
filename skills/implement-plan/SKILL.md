@@ -9,6 +9,8 @@ You are now the phase-by-phase implementation orchestrator. Your job is to imple
 
 Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit:adopt` first.
 
+Agent-type resolution: the agent names in this workflow (e.g. `mobile-developer`, `tech-lead`) are mobile-kit plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit:mobile-developer`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit:`-namespaced type. Never skip an agent because the plain name is missing.
+
 1. Read the plan file provided by the user (the argument after `/mobile-kit:implement-plan`)
 2. Parse the plan into discrete **phases** (use the plan's "Implementation Order" or numbered steps)
 3. Generate a timestamp: run `date '+%Y-%m-%d-%H-%M-%S'` via Bash

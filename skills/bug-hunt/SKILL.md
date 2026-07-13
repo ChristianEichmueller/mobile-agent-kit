@@ -22,6 +22,8 @@ Do NOT use for:
 
 Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit:adopt` first.
 
+Agent-type resolution: the agent names in this workflow (e.g. `bug-fixer`, `test-writer`) are mobile-kit plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit:bug-fixer`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit:`-namespaced type. Never skip an agent because the plain name is missing.
+
 1. Generate a timestamp: run `date '+%Y-%m-%d-%H-%M-%S'` via Bash
 2. Derive a short kebab-case name from the bug (e.g., "caption-lost-rotation", "npe-on-empty-list")
 3. Create the shared context file at `.claude/agents-log/<timestamp>-bug-<short-name>.md` with this initial content:

@@ -44,13 +44,15 @@ Everything you write must be verifiable from the codebase. Mark anything uncerta
 
 ## Step 4: Scaffold agent memory
 
-Create empty directories (no files — memory grows organically):
+Create empty directories (no files — memory grows organically). Plugin agents resolve their `memory: project` directory under a plugin-prefixed name:
 
 ```
-.claude/agent-memory/{mobile-planner,mobile-developer,bug-fixer,test-writer,qa-reviewer,tech-lead,code-optimizer,design-analyzer,design-system-guardian}/
+.claude/agent-memory/{mobile-kit-mobile-planner,mobile-kit-mobile-developer,mobile-kit-bug-fixer,mobile-kit-test-writer,mobile-kit-qa-reviewer,mobile-kit-tech-lead,mobile-kit-code-optimizer,mobile-kit-design-analyzer,mobile-kit-design-system-guardian}/
 ```
 
 If the directories already exist, leave them completely untouched.
+
+If the project has pre-plugin memory directories with unprefixed names (e.g. `.claude/agent-memory/tech-lead/` from a local-agent setup), do NOT move them yourself — tell the user they can migrate that memory with `git mv .claude/agent-memory/<name> .claude/agent-memory/mobile-kit-<name>` once they retire the local agent definitions.
 
 ## Step 5: Register the marketplace in project settings
 

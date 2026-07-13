@@ -9,6 +9,8 @@ You are now the orchestrator. Follow the steps below exactly. You coordinate by 
 
 Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit:adopt` first.
 
+Agent-type resolution: the agent names in this workflow (e.g. `mobile-planner`, `tech-lead`) are mobile-kit plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit:tech-lead`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit:`-namespaced type. Never skip an agent because the plain name is missing.
+
 1. Generate a timestamp: run `date '+%Y-%m-%d-%H-%M-%S'` via Bash
 2. Derive a short kebab-case name from the user's task (e.g., "order-history", "settings-search")
 3. Create the shared context file at `.claude/agents-log/<timestamp>-<short-name>.md` with this initial content:

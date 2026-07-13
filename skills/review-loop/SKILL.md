@@ -7,6 +7,8 @@ You are now the review-loop orchestrator. Your job is to run the tech-lead, QA r
 
 Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit:adopt` first.
 
+Agent-type resolution: the agent names in this workflow (e.g. `tech-lead`, `qa-reviewer`) are mobile-kit plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit:tech-lead`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit:`-namespaced type. Never skip an agent because the plain name is missing.
+
 ## Step 1: Tech Lead + QA Reviewer + Code Optimizer (PARALLEL)
 
 Spawn ALL THREE agents in parallel (in a single message with three Agent tool calls):
