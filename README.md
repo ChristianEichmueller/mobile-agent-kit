@@ -71,6 +71,10 @@ git mv .claude/agent-memory/<agent> .claude/agent-memory/mobile-kit-<agent>
 
 (For the renamed agents, also change the base name: `android-developer` → `mobile-kit-mobile-developer`, `android-planner` → `mobile-kit-mobile-planner`.)
 
+## Known issues
+
+Claude Code (observed on 2.1.195) injects a broken Persistent Agent Memory path for plugin agents — a doubled `.claude/.claude` segment — so automatic MEMORY.md loading silently fails. The agents in this kit work around it by self-managing memory: they read/write `.claude/agent-memory/mobile-kit-<agent>/` explicitly and ignore the injected path. No action needed; this note can be dropped once the upstream bug is fixed.
+
 ## License
 
 MIT
