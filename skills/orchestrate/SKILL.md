@@ -145,9 +145,17 @@ Spawn the design guardian:
 ```
 Agent(subagent_type: "design-system-guardian")
 ```
-Prompt: "Read the context file at `<path>` for full context. Review all UI code written or modified for design system compliance. When done, append your results under a `## Design Guardian Review` heading."
+Prompt: "Read the context file at `<path>` for full context. Review all UI code written or modified for design system compliance AND visual fidelity. **You must look at the rendered screen, not only the source** — if the project has no screenshot tests, capture it yourself (drive the surface with an existing UI test while polling `adb exec-out screencap`, or the platform equivalent). If a design/mock was provided, compare against it by measuring normalised gaps, not by eye. When done, append your results under a `## Design Guardian Review` heading, opening with a one-line **verification method** stating whether you looked at pixels or fell back to a source audit."
 
 If design guardian finds issues, spawn developer to fix, then re-run design guardian.
+
+**Before accepting a PASS, check the verification method line.** A design review that only read source
+has not done Job 2 — a screen can pass every design-token check and still be visibly wrong (two valid
+tokens resolving to the same colour, a house pattern that contradicts the mock, spacing that is
+self-consistent but nothing like the design). If the line says "source audit only", either send it back
+to capture the screen or record explicitly in the final report that visual fidelity was never verified.
+Do not let the same measurable mock deviation be filed "for designer sign-off" across multiple
+rounds — that is a fix the agent is deferring.
 
 ### Step 9: Final Report
 

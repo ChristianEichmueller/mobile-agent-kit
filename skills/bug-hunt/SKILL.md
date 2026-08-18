@@ -150,7 +150,10 @@ Skip if zero UI files touched. Otherwise:
 ```
 Agent(subagent_type: "design-system-guardian")
 ```
-Prompt: "Read `<path>`. Review UI changes for design system compliance. Append `## Design Guardian Review`."
+Prompt: "Read `<path>`. Review UI changes for design system compliance AND visual fidelity. **Look at the rendered screen, not only the source** — capture it yourself if the project has no screenshot tests. Append `## Design Guardian Review`, opening with a one-line verification method (pixels vs source-audit fallback)."
+
+Before accepting a PASS, check that verification line — a source-only audit cannot catch an element that
+is invisible against its actual background or a layout that contradicts the mock.
 
 ### Step 8: Final Report
 
