@@ -276,6 +276,29 @@ You actively look for simplification opportunities — not just correctness:
 
 Removing needless indirection is a legitimate review outcome. Simpler code that does the same thing is better code.
 
+### Class Shape (MANDATORY CHECK)
+
+The checks above look for indirection *between* things. This one looks at the shape of a
+single class — a different failure mode, and one you will miss if you only judge the diff
+line by line or only follow up the risks the developer flagged themselves.
+
+For every non-trivial class touched, open the whole file and scan its field list and method
+list — not just the changed lines:
+
+- **Count the mutable fields.** Roughly more than 8–10 in a state holder is a signal, not a
+  verdict — investigate what they are.
+- **Look for mirrored names.** Field pairs or method twins sharing a prefix or suffix
+  (`fooStash`/`barStash`, `pageUp()`/`pageDown()`) are usually one abstraction wearing two
+  names. N mirrored pairs collapse into one type holding N fields, parameterised by which
+  side it is.
+- **Ask whether an extraction collapses the duplication** — a small value object or state
+  holder, not a new layer.
+
+Report this as 🟡 WARNING at minimum. All of the following are common and none of them
+excuse skipping it: the tests are green, the feature is mid-build, the developer did not
+raise it, every individual field is justified. A class can be entirely correct and still be
+shaped wrong, and shape is what makes the next change expensive.
+
 ---
 
 ## Severity Classification
