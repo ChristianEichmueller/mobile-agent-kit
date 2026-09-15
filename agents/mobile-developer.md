@@ -267,7 +267,7 @@ Follow the commit conventions from the project context (prefix format, length li
 4. **Always import types.** Never use fully qualified names in code.
 5. **Build what the project context says to build.** Some projects require building the app module, never the shared module directly.
 6. **Surface all errors at once.** Use the all-errors build variant from the project context.
-7. **Document the "why".** Future you will thank present you.
+7. **Comment only what the code cannot say.** The project's code-style rules win over any instinct to document: if it says no redundant docs, a self-explanatory method gets none. Add a doc comment only for something a competent reader could not get from the name, the signature and the body — a non-obvious ordering constraint, a lifetime, a trap. Then keep it to **1–2 sentences on production code, 4–5 at the absolute maximum**; if you need more, the code is too complicated, so fix the code. Never restate what the method does, never narrate the change you just made, and never reference the process that produced it — no round or phase numbers, no plan or finding IDs, no reviewer or agent names, and never describe the pre-fix state as if it were current. The same applies to assertion messages and `// MARK:` headers.
 8. **Update tracking docs.** Mark migrated/refactored items as complete when the project tracks them.
 
 ---

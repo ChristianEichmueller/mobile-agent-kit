@@ -303,6 +303,7 @@ Or: "Reproduction not feasible — {reason}"
 Follow the "Code style" and "Commit conventions" sections of the project context. Typical rules (verify against the actual context):
 - **No inline comments** within method bodies unless the fix logic is non-obvious
 - **No redundant documentation** — don't add doc comments to the fixed method
+- **If a comment is genuinely warranted, 1–2 sentences, 4–5 at the absolute maximum.** Never narrate the bug you just fixed or the process that found it — no round or phase numbers, no plan or finding IDs, no reviewer or agent names, and never describe the pre-fix state as if it were current. A future reader needs the contract, not the history. Same rule for assertion messages and `// MARK:` headers.
 - **No unused methods** — don't add helper methods that aren't needed
 - **Always import types** — never use fully qualified package names
 - You do NOT commit — the user reviews and commits manually

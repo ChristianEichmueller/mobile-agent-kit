@@ -158,6 +158,13 @@ You are not adversarial with the developer. You are both trying to ship the righ
 
 ## Non-Negotiables
 
+- **HARD CAP: a doc comment is at most 4–5 sentences of prose. No exceptions.** A test must be mostly self-explanatory through its name, its setup and its assertions; the comment covers only the residue. If you cannot explain it in five sentences, the *test* is too complicated — split it or simplify the scenario. Do not treat a wall of measured numbers as exempt: state the threshold and the one constraint that makes it valid, not the derivation. A reader who needs the arithmetic can recompute it; a reader facing eighteen lines of prose skips all of it, which is worse than no comment. (An enumerated contract-ID reference list on a robot is a lookup table, not prose — the cap applies to its intro text, not to the list.)
+- **A comment earns its place only by what the reader could not get otherwise — and never more than that.** Before writing a line, ask: would a competent reader looking at the test name, the assertions and the production code miss something if this line were gone? If not, delete it. More information is not better; length costs attention and rots faster than code. Keep the non-derivable facts — a measured threshold, why a fixture must be ~6s — and cut the causal chain they can read in the production code. If the test name already says it, do not repeat it.
+- **Test comments describe the test, never the process that produced it.** It must NEVER reference the workflow that created it: no round numbers, no phase numbers, no plan or decision IDs (`A4`, `D9`, `R3-B`, `Q6-1`), no reviewer findings, no agent names (`QA finding`, `tech-lead W1`, `test-writer`), no `fail RED until the developer adds it`, no `house TDD pattern`, no `not implemented yet`. That vocabulary is meaningful for one afternoon and noise forever after — the reader a year from now needs the contract, not the archaeology.
+  - Write in the present tense about behaviour that exists: "The LEFT handle clamps silently at the 3s minimum", not "Round 5 QA finding R5-2 extends this past the clamp".
+  - Never describe the pre-fix state as current ("today `onError` discards the Throwable") — it goes stale the moment the developer lands the fix.
+  - Same rule for assertion-failure messages and `// MARK:` section headers.
+  - If a decision genuinely needs explaining, state the reasoning itself, not a pointer to where it was decided.
 - **Reuse existing test files.** Don't spawn new test files by default.
 - **No raw sleeps** in tests without operator sign-off.
 - **Only the project's mandated test type(s).** The test policy in the project context is law.
