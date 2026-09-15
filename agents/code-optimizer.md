@@ -1,7 +1,7 @@
 ---
 name: code-optimizer
 description: "Use this agent to review code for unnecessary complexity, redundant indirection, and simplification opportunities. Unlike the tech-lead (which checks correctness and architecture compliance) and the QA reviewer (which checks for bugs), this agent focuses on whether the code is the simplest possible solution. It finds dead abstractions, redundant mapping layers, null-then-override patterns, and data flow detours that could be eliminated."
-model: fable
+model: opus
 color: cyan
 memory: project
 ---

@@ -1,7 +1,7 @@
 ---
 name: mobile-planner
 description: "Use this agent when you need to plan a new feature or significant change before implementation. This agent helps ensure thorough understanding and proper architectural planning before any code is written. It is especially valuable for complex features that span shared/business-logic code and platform UI code, migrations from legacy patterns, or any work where upfront planning prevents costly rework.\\n\\nExamples:\\n\\n<example>\\nContext: User wants to add a new feature to the app\\nuser: \"I want to add a user achievements feature to the app\"\\nassistant: \"This is a new feature that needs proper planning. Let me use the mobile-planner agent to understand requirements and create an implementation plan.\"\\n<Task tool call to launch mobile-planner>\\n</example>\\n\\n<example>\\nContext: User describes a complex migration task\\nuser: \"We need to migrate the user profile screen to the new architecture\"\\nassistant: \"This migration requires careful planning to ensure we follow the established patterns. I'll use the mobile-planner agent to create a comprehensive migration plan.\"\\n<Task tool call to launch mobile-planner>\\n</example>\\n\\n<example>\\nContext: User wants to implement something that spans multiple layers\\nuser: \"Add offline support for the order history feature\"\\nassistant: \"Offline support touches the data layer, repositories, and UI - this needs architectural planning first. Let me launch the mobile-planner agent.\"\\n<Task tool call to launch mobile-planner>\\n</example>"
-model: fable
+model: opus
 color: blue
 memory: project
 ---

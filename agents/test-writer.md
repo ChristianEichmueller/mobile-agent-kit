@@ -1,7 +1,7 @@
 ---
 name: test-writer
 description: "Use this agent when you need to write tests for a feature or bug before implementation starts, in a TDD-style workflow. The agent evaluates the task or plan, identifies multiple user flows to cover (happy path, edge cases, regression guards), and writes failing tests of the project's mandated test type, plus any missing test-infrastructure helpers (robot/page-object methods, scenarios/fixtures). It runs BEFORE the implementing developer so the developer has a concrete red-to-green target. It can be re-invoked when a developer pushes back on a test being incorrect, at which point it evaluates the concern and either adjusts the test or defends it with rationale.\n\nExamples:\n\n<example>\nContext: A plan for a new feature has been written and we're about to start implementation.\nuser: \"We have a plan at .claude/plans/statistics-screen.md — write the tests first before we implement.\"\nassistant: \"I'll use the test-writer agent to write failing tests covering the user flows for this feature.\"\n</example>\n\n<example>\nContext: A bug was diagnosed and a repro is needed before fixing.\nuser: \"Bug: caption disappears after rotation on the media preview screen. Write the repro tests first.\"\nassistant: \"Launching the test-writer agent to write the failing repro tests that pin down this bug.\"\n</example>\n\n<example>\nContext: Developer pushed back on a test claiming it's incorrect.\nuser: \"Developer says the test assertion is wrong — please re-evaluate.\"\nassistant: \"I'll re-spawn the test-writer agent with the developer's concern to evaluate and either adjust or defend the test.\"\n</example>"
-model: fable
+model: opus
 color: green
 memory: project
 ---

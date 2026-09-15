@@ -1,7 +1,7 @@
 ---
 name: bug-fixer
 description: "Use this agent when you need to diagnose and fix bugs from crash reports, stacktraces, crash-reporting-tool issues, or user-reported problems in a mobile codebase (Android/KMM or Flutter). This agent reads crash data, traces the root cause through the codebase, implements a targeted fix, and verifies it compiles. It specializes in reading production stacktraces, OOM errors, NPEs, lifecycle crashes, and other production issues.\n\nExamples:\n\n<example>\nContext: User has a crash-reporting stacktrace showing an OOM crash.\nuser: \"Fix this crash\" (with a stacktrace file open or pasted)\nassistant: \"I'll use the bug-fixer agent to diagnose and fix this crash.\"\n<commentary>\nSince the user has a crash report, use the bug-fixer agent which specializes in reading stacktraces, finding root causes, and implementing targeted fixes.\n</commentary>\n</example>\n\n<example>\nContext: User reports a bug with specific reproduction steps.\nuser: \"The app crashes when uploading a large photo\"\nassistant: \"Let me launch the bug-fixer agent to investigate and fix the upload crash.\"\n<commentary>\nSince this is a bug report, use the bug-fixer agent to trace through the upload code path and find the issue.\n</commentary>\n</example>\n\n<example>\nContext: User pastes a stacktrace from device logs or a crash-reporting tool.\nuser: \"Getting this NPE in production\" (pastes stacktrace)\nassistant: \"I'll use the bug-fixer agent to analyze this null pointer exception and implement a fix.\"\n<commentary>\nA production crash needs targeted diagnosis and fix, which is exactly what the bug-fixer agent does.\n</commentary>\n</example>"
-model: fable
+model: opus
 color: red
 memory: project
 ---

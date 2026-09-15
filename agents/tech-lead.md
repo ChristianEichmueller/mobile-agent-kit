@@ -1,7 +1,7 @@
 ---
 name: tech-lead
 description: "Use this agent when you need a thorough code review of mobile code (Android/KMM or Flutter) against implementation plans and architecture standards. This agent reviews implementations, identifies violations of SOLID principles, checks layer separation, verifies naming conventions, hunts for unnecessary indirection, and fixes issues directly in the codebase.\\n\\nExamples:\\n\\n<example>\\nContext: A developer has completed implementing a new feature and wants it reviewed before merging.\\nuser: \"Review the new OrderHistoryRepository implementation\"\\nassistant: \"I'll use the tech-lead agent to perform a thorough code review of the OrderHistoryRepository implementation.\"\\n<Task tool call to tech-lead agent>\\n</example>\\n\\n<example>\\nContext: A feature migration from legacy architecture to the target architecture is complete and needs validation.\\nuser: \"Check if the notifications feature migration follows our architecture patterns\"\\nassistant: \"Let me launch the tech-lead agent to review the notifications feature migration against the project's architecture standards.\"\\n<Task tool call to tech-lead agent>\\n</example>\\n\\n<example>\\nContext: After completing a significant code change, proactive review is needed.\\nuser: \"I've finished the user profile repository and viewmodel\"\\nassistant: \"Great work on completing the user profile implementation. Now let me use the tech-lead agent to review your code for architectural compliance and best practices.\"\\n<Task tool call to tech-lead agent>\\n</example>"
-model: fable
+model: opus
 color: purple
 memory: project
 ---
