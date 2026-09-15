@@ -1,6 +1,6 @@
 ---
 name: bug-hunt
-description: "Diagnose a bug in a mobile project, write a failing repro test that pins it down, fix the code, then verify with review. TDD-style bug workflow: repro test first, then fix, then confirm test flips green. Triggers on: /mobile-kit:bug-hunt <bug description or stacktrace>"
+description: "Diagnose a bug in a mobile project, write a failing repro test that pins it down, fix the code, then verify with review. TDD-style bug workflow: repro test first, then fix, then confirm test flips green. Triggers on: /mobile-kit:bug-hunt <bug description or stacktrace> (full workflow) or /mobile-kit:bug-hunt fast <bug> (fast track for small, clearly-localized bugs)"
 ---
 
 You are now the orchestrator for a bug hunt. Follow the steps below exactly. Coordinate by spawning specialized agents and reading a shared context file between steps. Do NOT delegate orchestration — YOU execute these steps directly.
@@ -40,7 +40,18 @@ Agent-type resolution: the agent names in this workflow (e.g. `bug-fixer`, `test
 
 Store the context file path — pass it to every agent.
 
-## Workflow
+## Mode Selection
+
+The first word of the arguments selects the mode:
+
+- `fast <bug>` → run the **Fast Track Workflow** (see below). Strip the word `fast`; the remainder is the bug report.
+- `full <bug>` or no flag → run the full **Workflow**.
+
+The mode is ALWAYS the user's explicit choice. Never downgrade a bug to the fast track on your own judgment, and never suggest mid-run that the full workflow is overkill — if the user chose full for a small bug, they have a reason. The only mode change allowed mid-run is a fast→full upgrade, and only after asking the user (see the escalation valves in the fast track).
+
+Record the mode in the context file header as `Mode: fast` or `Mode: full`.
+
+## Workflow (full — default)
 
 Execute in order. Read the context file between steps to verify progress.
 
@@ -189,13 +200,63 @@ Rules for the report:
 - Agent ID is the ID returned by each Agent tool call
 - MUST contain at minimum: 2x bug-fixer (diagnosis + fix), 1x test-writer, 1x tech-lead, 1x qa-reviewer
 
+## Fast Track Workflow (`fast` flag only)
+
+For small, clearly-localized bugs the user explicitly flagged as `fast` — a stacktrace that points at an obvious spot, a one-screen glitch, a regression with a known trigger. The TDD contract is unchanged — failing repro test before the fix, fixers never modify tests, an independent review — but with fewer agents and fewer emulator runs. What gets cut: the dedicated diagnosis spawn, the second parallel reviewer, full-suite test runs, and open-ended fix loops.
+
+### Step FB1: Inline Diagnosis (no diagnosis agent)
+
+YOU diagnose the bug yourself — do not spawn the bug fixer for diagnosis. Read the stacktrace/repro steps, trace the root cause in the code, then append to the context file under `## Diagnosis (fast track)`:
+- Confirmed root cause with file:line
+- The user-observable symptom in one line
+- Proposed fix approach (not code — just the approach)
+- Repro test plan: ONE repro test + ONE control test
+
+**Escalation valve:** if you cannot pin the root cause down with confidence from reading the code — you would need runtime evidence (temporary diagnostic prints, log captures, dispatcher/state inspection) — the bug is not fast-track material. STOP and ask the user whether to upgrade to the full workflow (the context file carries over — restart at Step 1) or continue fast anyway.
+
+### Step FB2: Test Writer — Scoped Repro
+
+Spawn the test writer exactly as in Step 2, but with these scope overrides appended to the prompt:
+- "This is a fast-track run. Write exactly the tests listed in `## Diagnosis (fast track)` — one repro test and one control test, no more. Add them to an existing test file if one covers the same feature. Include the second-event assertion if the bug is lifecycle-related. Verify repro=FAILED and control=PASSED by running ONLY these tests via the targeted single-class/single-method test command from the project context — never a full suite."
+
+The verification checklist from Step 2 applies unchanged.
+
+### Step FB3: Bug Fixer — Fix
+
+Spawn the bug fixer exactly as in Step 3, additionally instructing: "Verify with the same targeted test command the test writer used — do not run full suites." The push-back mechanism (`## Developer Test Concern` → Step 4, max 2 iterations) and the no-test-modification check apply unchanged.
+
+**Escalation valve:** if the fix grows beyond a small diff (multiple subsystems, architectural change, the diagnosis turns out wrong), STOP and ask the user whether to upgrade to the full workflow before reviewing.
+
+### Step FB4: Combined Review (single agent)
+
+Instead of parallel tech-lead + qa-reviewer, spawn ONE tech-lead agent with a combined brief:
+
+```
+Agent(subagent_type: "tech-lead")
+```
+Prompt: "Read the context file at `<path>` for full bug context, repro tests, and the fix. This is a fast-track combined review — cover BOTH checklists: (a) is this the smallest correct diff, (b) does it introduce architectural violations, (c) are there other sites in the codebase with the SAME bug pattern (report them — do NOT fix them), (d) did the fixer modify tests (must be zero), (e) edge cases the fix does not cover (null / empty / concurrent / lifecycle), (f) do the repro test's assertions actually pin the bug down. The review is READ-ONLY: do not run builds or tests; read the diff and the test results already recorded in the context file. Report ONLY issues that must block a commit under `## Combined Review`, with file:line references. List deliberately skipped nitpicks and same-pattern sites under `## Combined Review — Minor (not blocking)`."
+
+If UI files with visible changes were touched, spawn the design guardian (Step 7 prompt) IN PARALLEL with the combined review — both Agent calls in the same message. Skip the guardian entirely for invisible or non-UI changes.
+
+### Step FB5: Fix Round (max 1)
+
+If blocking issues were found: spawn the bug fixer once to fix them (re-running only the affected tests), then re-spawn the combined reviewer once to verify. If blocking issues remain after this single round, STOP and report them to the user — the user decides whether to keep fixing in fast mode or upgrade to the full workflow. Same-pattern sites flagged by the review are ALWAYS deferred to the user (scope creep guard), never fixed in the fast track.
+
+### Step FB6: Final Report
+
+Same report format and rules as Step 8, with these differences:
+- Add a `**Mode:** fast` line
+- Minimum required spawns: 1x test-writer, 1x bug-fixer (fix), 1x tech-lead (combined review). The diagnosis row is listed as `inline (fast track)`, the qa-reviewer row as `skipped (fast track)`.
+- If the review recorded non-blocking minor findings or same-pattern sites, list them at the end of the report so the user can decide.
+
 ## Rules
 
-- You MUST spawn bug-fixer BEFORE test-writer for diagnosis — the test needs the root cause to be pinned first
-- You MUST spawn test-writer BEFORE the fix — the test is the contract
+- The mode (fast/full) is the user's explicit choice via the `fast` flag — never pick or switch it yourself; fast→full upgrades only via the escalation valves, and only after asking the user
+- Diagnosis comes BEFORE test-writer — via bug-fixer spawn (full) or inline by you (fast); the test needs the root cause to be pinned first
+- You MUST spawn test-writer BEFORE the fix — the test is the contract (both modes)
 - The fix agent MUST NOT modify test files. If they do, the fix is invalid — re-spawn with correction instruction.
 - Push-back loop capped at 2 iterations. Escalate on iteration 3.
-- Tech-lead + QA are NEVER optional.
+- Tech-lead + QA are NEVER optional (full workflow; in the fast track the combined review in Step FB4 is the never-optional equivalent).
 - Never commit — user reviews and commits manually.
 - Never skip the final report.
 - If the bug fixer requires temporary diagnostic prints in prod code for evidence, they MUST remove them before finishing. Grep for their tag as a sanity check.
