@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: "Orchestrate a full mobile feature workflow by spawning specialized agents in sequence (TDD-style: tests first, then implementation, then review). Works with any mobile stack (Android/KMM, Flutter) via the project context contract. Triggers on: /mobile-kit:orchestrate <task>"
+description: "Orchestrate a full mobile feature workflow by spawning specialized agents in sequence (TDD-style: tests first, then implementation, then review). Works with any mobile stack (Android/KMM, Flutter) via the project context contract. Triggers on: /mobile-kit:orchestrate <task> (full workflow) or /mobile-kit:orchestrate fast <task> (fast track for small tasks)"
 ---
 
 You are now the orchestrator. Follow the steps below exactly. You coordinate by spawning agents and reading a shared context file between steps. Do NOT delegate orchestration to another agent — YOU execute these steps directly.
@@ -27,7 +27,18 @@ Agent-type resolution: the agent names in this workflow (e.g. `mobile-planner`, 
 
 Store the context file path — you will pass it to every agent.
 
-## Workflow
+## Mode Selection
+
+The first word of the arguments selects the mode:
+
+- `fast <task>` → run the **Fast Track Workflow** (see below). Strip the word `fast`; the remainder is the task.
+- `full <task>` or no flag → run the full **Workflow**.
+
+The mode is ALWAYS the user's explicit choice. Never downgrade a task to the fast track on your own judgment, and never suggest mid-run that the full workflow is overkill — if the user chose full for a small task, they have a reason. The only mode change allowed mid-run is a fast→full upgrade, and only after asking the user (see the escalation valves in the fast track).
+
+Record the mode in the context file header as `Mode: fast` or `Mode: full`.
+
+## Workflow (full — default)
 
 Execute these steps in order. Between each step, read the context file to check results before proceeding.
 
@@ -186,12 +197,61 @@ Rules for the report:
 - Agent ID is the ID returned by each Agent tool call — this proves real delegation
 - The report MUST contain at minimum: 1x planner, 1x test-writer, 1x developer, 1x tech-lead, 1x qa-reviewer
 
+## Fast Track Workflow (`fast` flag only)
+
+For small tasks the user explicitly flagged as `fast`. The TDD contract is unchanged — tests before implementation, developers never modify tests, at least one independent review — but with fewer agents and fewer emulator runs. What gets cut: the planner spawn, the design-analyzer, the second parallel reviewer, full-suite test runs, and open-ended fix loops.
+
+### Step F1: Inline Mini-Plan (no planner agent)
+
+YOU write the plan yourself — do not spawn the planner. Briefly explore the code involved, then append to the context file under `## Plan (fast track)`:
+- Files to create/modify (expected: roughly 3-4 or fewer)
+- Approach in 5-10 lines
+- Test plan: 1-2 flows maximum — the happy path plus one regression guard
+
+**Escalation valve:** if while exploring you find the task needs a new architectural component (new repository, new screen/state holder, changed API contract) or clearly more files than expected, STOP and ask the user whether to upgrade to the full workflow (the context file carries over — restart at Step 1) or continue fast anyway.
+
+### Step F2: Test Writer (scoped)
+
+Spawn the test writer exactly as in Step 3, but with these scope overrides appended to the prompt:
+- "This is a fast-track run. Cover ONLY the flows listed in `## Plan (fast track)` — maximum 2 tests, no flow matrix. Add tests to an existing test file if one covers the same feature. Verify RED by running ONLY the new tests via the targeted single-class/single-method test command from the project context — never a full suite."
+
+The verification checklist and `## Test Writer — Questions` relay from Step 3 apply unchanged.
+
+### Step F3: Developer
+
+Spawn the developer exactly as in Step 4, additionally instructing: "Verify GREEN with the same targeted test command the test writer used — do not run full suites." The push-back mechanism (`## Developer Test Concern` → Step 5, max 2 iterations) applies unchanged.
+
+**Escalation valve:** if the developer's report shows the change grew beyond the mini-plan scope (significantly more files, architectural change), STOP and ask the user whether to upgrade to the full workflow before reviewing.
+
+### Step F4: Combined Review (single agent)
+
+Instead of parallel tech-lead + qa-reviewer, spawn ONE tech-lead agent with a combined brief:
+
+```
+Agent(subagent_type: "tech-lead")
+```
+Prompt: "Read the context file at `<path>` for full task context, tests, and what was implemented. This is a fast-track combined review — cover BOTH the architecture/convention checklist AND the QA checklist (bugs, edge cases, null safety, race conditions, lifecycle). The review is READ-ONLY: do not run builds or tests; read the diff and the test results already recorded in the context file. Also verify the developer did not modify tests to make them pass (compare against the `## Test Writer` file list). Report ONLY issues that must block a commit (bugs, correctness problems, contract violations) under `## Combined Review`, with file paths and line numbers. List deliberately skipped nitpicks under `## Combined Review — Minor (not blocking)` so nothing is silently dropped."
+
+If UI files with visible changes were touched, spawn the design guardian (Step 8 prompt) IN PARALLEL with the combined review — both Agent calls in the same message. Skip the guardian entirely for invisible or non-UI changes.
+
+### Step F5: Fix Round (max 1)
+
+If blocking issues were found: spawn the developer once to fix them (re-running only the affected tests), then re-spawn the combined reviewer once to verify the fixes. If blocking issues remain after this single round, STOP and report them to the user instead of looping — the user decides whether to keep fixing in fast mode or upgrade to the full workflow.
+
+### Step F6: Final Report
+
+Same report format and rules as Step 9, with these differences:
+- Add a `**Mode:** fast` line
+- Minimum required spawns: 1x test-writer, 1x developer, 1x tech-lead (combined review). Planner and qa-reviewer rows are listed as `skipped (fast track)`.
+- If the review recorded non-blocking minor findings, list them at the end of the report so the user can decide whether to address them.
+
 ## Rules
 
+- The mode (fast/full) is the user's explicit choice via the `fast` flag — never pick or switch it yourself; fast→full upgrades only via the escalation valves, and only after asking the user
 - You MUST spawn each agent as a separate Agent tool call with the correct `subagent_type`
 - You MUST read the context file between steps to verify progress
-- You MUST spawn test-writer BEFORE developer — the tests are the contract, not an afterthought
-- You MUST spawn tech-lead and qa-reviewer — they are NEVER optional
+- You MUST spawn test-writer BEFORE developer — the tests are the contract, not an afterthought (both modes)
+- You MUST spawn tech-lead and qa-reviewer — they are NEVER optional (full workflow; in the fast track the combined review in Step F4 is the never-optional equivalent)
 - Push-back loop is capped at 2 iterations. Escalate on iteration 3.
 - If any agent asks a question, relay it to the user and wait for the answer
 - Never commit code — the user will review and commit manually

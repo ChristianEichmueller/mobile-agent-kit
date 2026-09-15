@@ -24,6 +24,7 @@ A [Claude Code plugin](https://code.claude.com/docs/en/plugins) providing a TDD-
 |---|---|
 | `/mobile-kit:adopt` | Onboard a project: analyze codebase, generate the context pack, scaffold memory |
 | `/mobile-kit:orchestrate <task>` | Full feature workflow: plan → failing tests → implement → parallel review → design review |
+| `/mobile-kit:orchestrate fast <task>` | Fast track for small tasks: inline mini-plan → scoped failing tests → implement → single combined review; escalates to full mode (with user approval) if scope grows |
 | `/mobile-kit:bug-hunt <bug>` | Diagnose → failing repro test → fix → review |
 | `/mobile-kit:review-loop` | tech-lead + qa-reviewer + code-optimizer in parallel, fix, re-review until clean |
 | `/mobile-kit:implement-plan <plan-path>` | Phase-by-phase implementation with per-phase review |
