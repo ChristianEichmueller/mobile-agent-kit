@@ -4,7 +4,7 @@ A [Claude Code plugin](https://code.claude.com/docs/en/plugins) providing a TDD-
 
 ## What's inside
 
-**9 agents** (`agents/`):
+**11 agents** (`agents/`):
 
 | Agent | Role |
 |---|---|
@@ -17,8 +17,10 @@ A [Claude Code plugin](https://code.claude.com/docs/en/plugins) providing a TDD-
 | `code-optimizer` | Finds dead abstractions, redundant layers, data-flow detours |
 | `design-analyzer` | Design requirements + reusable-component mapping |
 | `design-system-guardian` | Design-token compliance, no hardcoded values, accessibility |
+| `night-planner` | Turns end-of-day tickets into self-contained night orders; asks everything BEFORE the developer leaves |
+| `night-auditor` | Independently verifies the night's claims: re-runs tests, revert-checks, audits git vs. policy; flags, never fixes |
 
-**5 skills** (`skills/`):
+**6 skills** (`skills/`):
 
 | Command | Workflow |
 |---|---|
@@ -29,6 +31,7 @@ A [Claude Code plugin](https://code.claude.com/docs/en/plugins) providing a TDD-
 | `/mobile-kit:bug-hunt fast <bug>` | Fast track for small, localized bugs: inline diagnosis → scoped repro test → fix → single combined review; escalates to full mode (with user approval) if scope grows |
 | `/mobile-kit:review-loop` | tech-lead + qa-reviewer + code-optimizer in parallel, fix, re-review until clean |
 | `/mobile-kit:implement-plan <plan-path>` | Phase-by-phase implementation with per-phase review |
+| `/mobile-kit:night-shift prep \| run \| audit` | Overnight autonomy: `prep` builds a night-ready ticket queue before end of day; `run` executes it overnight — never waits for a human, parks blocked tickets, ends with an independent audit — and delivers a verified morning report; `audit` runs that verification standalone |
 
 Key rule across all workflows: **tests are written before implementation and are the contract.** Implementers may not modify tests; disagreements go through a capped push-back protocol (max 2 iterations, then escalate to the user).
 
