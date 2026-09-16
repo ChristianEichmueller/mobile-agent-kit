@@ -21,25 +21,11 @@ Never write into the installed plugin cache (`~/.claude/plugins/cache/...`). It 
 
 The writing target is decided in Step 4. Until then, read only.
 
-## How to ask
-
-The question tool always offers a free-text answer of its own. So:
-
-- **Never add an option that only means "let me type it."** No "Describe it:", no "Somewhere else:", no "Here:". That answer already exists and costs the user an extra round trip.
-- **Only offer options that are real, concrete choices** — a named spot, a named agent, a detected path, yes or no.
-- **An open question gets no options at all.** A description, a path, a correction: ask it as plain text and read what the user types.
-
----
-
 ## Step 1: ASK — What does the new agent do?
 
-Ask one open question, with no options:
+Ask what the new agent should do. The answer is free text: a description, or a path to an existing agent file. Work out which you got.
 
-> What should the new agent do? Describe it, or give me the path to an existing agent file.
-
-The answer is free text either way. Work out which you got — a description, or a path.
-
-If the user already passed a description or a path as an argument, skip the question and confirm what you understood.
+If the user already passed one as an argument, skip the question and confirm what you understood.
 
 For a path: read the file now. Keep its role — you will rewrite everything around it in Step 6.
 
@@ -61,11 +47,9 @@ Also check honestly whether an existing agent already does this job. `tech-lead`
 
 ## Step 3: ASK — Where to locate the new agent?
 
-Present your findings as options — each a real spot, each with a one-line reason, one marked as recommended.
+Offer the spots you found as choices, each with a one-line reason, one recommended.
 
-Add **"Extend `<existing agent>` instead"** as an option when Step 2 showed the job is already covered.
-
-Do not add an option for typing something else. The user can always type a spot you did not list.
+Add **"Extend `<existing agent>` instead"** when Step 2 showed the job is already covered.
 
 If you concluded the agent should not exist, say so plainly and recommend that option. The user decides. If they overrule you, build it in full without arguing again.
 
@@ -80,12 +64,9 @@ Ask, with these answers:
 
 If the answer is "the whole team", you need a copy of the plugin repo — never the installed cache.
 
-Look for a clone on disk first. Then ask, offering only real choices:
+Look for a clone on disk, then ask which to use: the clones you found, or **"Create a fork for me"** (`gh repo fork <upstream> --clone`; if `gh` is not authenticated, stop and ask the user to log in).
 
-- **the clone you found**, by its path — one option per clone, if there are several
-- **"Create a fork for me"** — run `gh repo fork <upstream> --clone`, then confirm the path. If `gh` is not authenticated, stop and ask the user to log in.
-
-A path you did not find, the user can type. Verify whichever path you end up with: it must hold `.claude-plugin/plugin.json` and `agents/`, and the working tree must be clean.
+Verify whichever path you end up with: it must hold `.claude-plugin/plugin.json` and `agents/`, and the working tree must be clean.
 
 This answer decides the memory directory in Step 6, so do not skip it.
 
@@ -114,9 +95,7 @@ Files:
 
 If the agent needs project facts `PROJECT_CONTEXT.md` does not carry yet, warn separately here: it forces a `CONTRACT_VERSION` bump and a re-`adopt` in every project already using this kit.
 
-Then ask, with two options: **go** and **cancel**.
-
-Anything the user types instead is the correction — apply it and show the preview again.
+Then ask: **go** or **cancel**. Anything else the user says is a correction — apply it and show the preview again.
 
 Write nothing before "go".
 
@@ -163,7 +142,6 @@ Never commit and never push — the user reviews and does that.
 ## Rules
 
 - Ask the four questions in order. Do not guess an answer the user has not given.
-- Never make an option out of a free-text answer — the question tool always has one.
 - Everything not asked is your decision, and all of it is shown in the preview.
 - Write nothing before the user says "go".
 - Never write into the installed plugin cache.
