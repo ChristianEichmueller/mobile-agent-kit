@@ -21,33 +21,33 @@ Never write into the installed plugin cache (`~/.claude/plugins/cache/...`). It 
 
 The writing target is decided in Step 4. Until then, read only.
 
-## Step 1: ASK — What does the new agent do?
+## Step 1: ANALYZE — What is missing?
 
-Ask what the new agent should do. The answer is free text: a description, or a path to an existing agent file. Work out which you got.
+Do this before asking anything.
 
-If the user already passed one as an argument, skip the question and confirm what you understood.
+Read every `agents/*.md` in this kit (frontmatter is enough) and every `skills/*/SKILL.md`: which agent runs in which workflow, at which step, parallel or sequential. Note the `##` headings already taken in the shared context file.
+
+From that, work out **which agents this kit does not have** — real gaps, each one a job no current agent covers. Three or four is plenty.
+
+If the user already passed a description or a path as an argument, you still do this analysis, but skip Step 2 and confirm what you understood.
+
+---
+
+## Step 2: ASK — What does the new agent do?
+
+Ask with the gaps you found as the choices, each a concrete agent with a one-line job.
+
+Say in the question that the user can also type their own description, or a path to an existing agent file. Do not make those into choices — the free-text answer already covers them.
 
 For a path: read the file now. Keep its role — you will rewrite everything around it in Step 6.
 
 ---
 
-## Step 2: ANALYZE — Where to locate the new agent?
-
-Read, before proposing anything:
-
-- every `agents/*.md` in this kit — at minimum the frontmatter, so you know each agent's job and boundary
-- every `skills/*/SKILL.md` — the workflow steps, which agent runs where, what is parallel, what is sequential
-- the `##` headings already used in the shared context file, so you know which are taken
-
-Then work out **all** spots where the new agent could fit, and pick the best. A spot is: which workflow, at which step, before or after which agent, parallel or sequential.
-
-Also check honestly whether an existing agent already does this job. `tech-lead`, `qa-reviewer` and `code-optimizer` overlap already — a fourth reviewer needs a boundary you can state in one sentence.
-
----
-
 ## Step 3: ASK — Where to locate the new agent?
 
-Offer the spots you found as choices, each with a one-line reason, one recommended.
+Using Step 1's map, work out every spot the agent could fit — which workflow, which step, before or after which agent, parallel or sequential — and pick the best. Check honestly whether an existing agent already does this job; `tech-lead`, `qa-reviewer` and `code-optimizer` overlap already, so a fourth reviewer needs a boundary you can state in one sentence.
+
+Offer the spots as choices, each with a one-line reason, one recommended.
 
 Add **"Extend `<existing agent>` instead"** when Step 2 showed the job is already covered.
 
@@ -142,6 +142,7 @@ Never commit and never push — the user reviews and does that.
 ## Rules
 
 - Ask the four questions in order. Do not guess an answer the user has not given.
+- Ask with the question tool, so the user sees choices. Never end a turn on a bare question.
 - Everything not asked is your decision, and all of it is shown in the preview.
 - Write nothing before the user says "go".
 - Never write into the installed plugin cache.
