@@ -1,15 +1,15 @@
 ---
 name: orchestrate
-description: "Orchestrate a full mobile feature workflow by spawning specialized agents in sequence (TDD-style: tests first, then implementation, then review). Works with any mobile stack (Android/KMM, Flutter) via the project context contract. Triggers on: /mobile-kit:orchestrate <task> (full workflow) or /mobile-kit:orchestrate fast <task> (fast track for small tasks)"
+description: "Orchestrate a full mobile feature workflow by spawning specialized agents in sequence (TDD-style: tests first, then implementation, then review). Works with any mobile stack (Android/KMM, Flutter) via the project context contract. Triggers on: /mobile-kit-test:orchestrate <task> (full workflow) or /mobile-kit-test:orchestrate fast <task> (fast track for small tasks)"
 ---
 
 You are now the orchestrator. Follow the steps below exactly. You coordinate by spawning agents and reading a shared context file between steps. Do NOT delegate orchestration to another agent — YOU execute these steps directly.
 
 ## Setup
 
-Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit:adopt` first.
+Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit-test:adopt` first.
 
-Agent-type resolution: the agent names in this workflow (e.g. `mobile-planner`, `tech-lead`) are mobile-kit plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit:tech-lead`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit:`-namespaced type. Never skip an agent because the plain name is missing.
+Agent-type resolution: the agent names in this workflow (e.g. `mobile-planner`, `tech-lead`) are mobile-kit-test plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit-test:tech-lead`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit-test:`-namespaced type. Never skip an agent because the plain name is missing.
 
 1. Generate a timestamp: run `date '+%Y-%m-%d-%H-%M-%S'` via Bash
 2. Derive a short kebab-case name from the user's task (e.g., "order-history", "settings-search")

@@ -1,28 +1,28 @@
 ---
 name: bug-hunt
-description: "Diagnose a bug in a mobile project, write a failing repro test that pins it down, fix the code, then verify with review. TDD-style bug workflow: repro test first, then fix, then confirm test flips green. Triggers on: /mobile-kit:bug-hunt <bug description or stacktrace> (full workflow) or /mobile-kit:bug-hunt fast <bug> (fast track for small, clearly-localized bugs)"
+description: "Diagnose a bug in a mobile project, write a failing repro test that pins it down, fix the code, then verify with review. TDD-style bug workflow: repro test first, then fix, then confirm test flips green. Triggers on: /mobile-kit-test:bug-hunt <bug description or stacktrace> (full workflow) or /mobile-kit-test:bug-hunt fast <bug> (fast track for small, clearly-localized bugs)"
 ---
 
 You are now the orchestrator for a bug hunt. Follow the steps below exactly. Coordinate by spawning specialized agents and reading a shared context file between steps. Do NOT delegate orchestration — YOU execute these steps directly.
 
 ## When To Use This Skill
 
-Use `/mobile-kit:bug-hunt` for:
+Use `/mobile-kit-test:bug-hunt` for:
 - A crash report / stacktrace / crash-reporting-tool issue
 - A user-reported bug ("X doesn't work when I do Y")
 - A regression discovered manually or via CI
 - A rotation / lifecycle / edge-case bug the user found
 
 Do NOT use for:
-- Adding a new feature — use `/mobile-kit:orchestrate` instead
-- Refactoring without a specific bug — use `/mobile-kit:orchestrate` instead
-- Code review of existing changes — use `/mobile-kit:review-loop`
+- Adding a new feature — use `/mobile-kit-test:orchestrate` instead
+- Refactoring without a specific bug — use `/mobile-kit-test:orchestrate` instead
+- Code review of existing changes — use `/mobile-kit-test:review-loop`
 
 ## Setup
 
-Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit:adopt` first.
+Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit-test:adopt` first.
 
-Agent-type resolution: the agent names in this workflow (e.g. `bug-fixer`, `test-writer`) are mobile-kit plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit:bug-fixer`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit:`-namespaced type. Never skip an agent because the plain name is missing.
+Agent-type resolution: the agent names in this workflow (e.g. `bug-fixer`, `test-writer`) are mobile-kit-test plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit-test:bug-fixer`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit-test:`-namespaced type. Never skip an agent because the plain name is missing.
 
 1. Generate a timestamp: run `date '+%Y-%m-%d-%H-%M-%S'` via Bash
 2. Derive a short kebab-case name from the bug (e.g., "caption-lost-rotation", "npe-on-empty-list")
@@ -106,11 +106,11 @@ After it completes, verify:
 Two branches:
 
 - **Repro PASSED + control PASSED + no test files touched** → proceed to Step 5.
-- **Bug fixer believes a test is wrong** → the bug fixer must append `## Developer Test Concern` (yes, same heading as in `/mobile-kit:orchestrate`) with rationale. Proceed to Step 4.
+- **Bug fixer believes a test is wrong** → the bug fixer must append `## Developer Test Concern` (yes, same heading as in `/mobile-kit-test:orchestrate`) with rationale. Proceed to Step 4.
 
 ### Step 4: Test Writer — Push-Back Loop (max 2 iterations)
 
-Same push-back mechanism as `/mobile-kit:orchestrate`. Track iteration count.
+Same push-back mechanism as `/mobile-kit-test:orchestrate`. Track iteration count.
 
 Spawn test writer:
 ```

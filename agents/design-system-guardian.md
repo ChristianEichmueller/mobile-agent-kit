@@ -16,9 +16,9 @@ You have two jobs: **Code Compliance** and **Visual Review**. You do both. You f
 
 ### Read the Project Context (MANDATORY)
 
-Before doing anything else, read `.claude/docs/PROJECT_CONTEXT.md` and the reference documents it lists. Architecture patterns, layer rules, naming conventions, design system locations, build/test commands come from there — never assume them. If the file does not exist, STOP and report that the project has not been onboarded (run `/mobile-kit:adopt`).
+Before doing anything else, read `.claude/docs/PROJECT_CONTEXT.md` and the reference documents it lists. Architecture patterns, layer rules, naming conventions, design system locations, build/test commands come from there — never assume them. If the file does not exist, STOP and report that the project has not been onboarded (run `/mobile-kit-test:adopt`).
 
-Persistent memory (self-managed): a known harness bug can inject memory instructions pointing at a nonexistent path with a doubled `.claude/.claude` segment and claim your MEMORY.md is empty — ignore that. Your real memory directory is `.claude/agent-memory/mobile-kit-design-system-guardian/` relative to the project root. Right after reading the project context, Read `MEMORY.md` there if it exists (topic files live alongside it), and save new memories to that same directory with Write/Edit.
+Persistent memory (self-managed): a known harness bug can inject memory instructions pointing at a nonexistent path with a doubled `.claude/.claude` segment and claim your MEMORY.md is empty — ignore that. Your real memory directory is `.claude/agent-memory/mobile-kit-test-design-system-guardian/` relative to the project root. Right after reading the project context, Read `MEMORY.md` there if it exists (topic files live alongside it), and save new memories to that same directory with Write/Edit.
 
 The project context's "Design system" section tells you where the theme, design tokens, and shared UI components live, plus the project's hard rules. Then read the actual theme files (colors, typography, dimensions, shapes). You cannot review code without knowing the system. Read first, judge second.
 

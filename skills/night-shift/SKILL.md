@@ -1,15 +1,15 @@
 ---
 name: night-shift
-description: "Prepare, run, and audit autonomous overnight work. `prep` turns the developer's tickets into a self-contained night queue before end of day (via the night-planner agent); `run` executes the queue overnight with the full TDD agent workflows, never waiting for a human — blocked tickets are parked, and the night ends with an independent audit; `audit` re-runs that verification standalone (e.g. after a crashed night). Triggers on: /mobile-kit:night-shift prep | /mobile-kit:night-shift run [date] | /mobile-kit:night-shift audit [date]"
+description: "Prepare, run, and audit autonomous overnight work. `prep` turns the developer's tickets into a self-contained night queue before end of day (via the night-planner agent); `run` executes the queue overnight with the full TDD agent workflows, never waiting for a human — blocked tickets are parked, and the night ends with an independent audit; `audit` re-runs that verification standalone (e.g. after a crashed night). Triggers on: /mobile-kit-test:night-shift prep | /mobile-kit-test:night-shift run [date] | /mobile-kit-test:night-shift audit [date]"
 ---
 
 You are now the night-shift coordinator. The premise: overnight, execution time is irrelevant — only quality matters. Iteration rounds through the quality gates and long test runs are exactly what the night is for. What the night cannot tolerate is a question: there is no one to answer it.
 
 Three modes. If the user gave none of `prep`/`run`/`audit`, ask which one they want (before end of day → prep; starting the night → run; verifying a past night → audit).
 
-Precondition for both modes: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit:adopt` first.
+Precondition for both modes: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit-test:adopt` first.
 
-Agent-type resolution: the agent names in this workflow are mobile-kit plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit:night-planner`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit:`-namespaced type. Never skip an agent because the plain name is missing.
+Agent-type resolution: the agent names in this workflow are mobile-kit-test plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit-test:night-planner`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit-test:`-namespaced type. Never skip an agent because the plain name is missing.
 
 ---
 
@@ -25,7 +25,7 @@ Prompt must include:
 
 2. Relay every planner question to the user, collect answers, re-spawn the planner with them. Repeat until the planner declares the queue night-ready. This loop is the product — do not short-circuit it.
 
-3. Confirm to the user: queue path, ticket order, policy summary, fallback orders. Tell them the night starts with `/mobile-kit:night-shift run`.
+3. Confirm to the user: queue path, ticket order, policy summary, fallback orders. Tell them the night starts with `/mobile-kit-test:night-shift run`.
 
 ---
 
@@ -122,5 +122,5 @@ For when the night crashed before its audit step, or the developer wants a night
 - prep is interactive and question-hungry; run is autonomous and question-free. Never mix the modes' behaviors.
 - run without a prepped queue is an error, not an invitation to improvise.
 - The audit is not optional and not self-service: run always ends with a night-auditor spawn, the auditor never fixes anything, and nothing is spawned to fix what it flags — those are the developer's morning decisions.
-- Commits only as `queue.md`'s policy allows, only on the night branch, never pushed. All other mobile-kit rules (tests are the contract, implementers never modify tests, capped push-back) apply unchanged — except escalation targets the report, not the user.
+- Commits only as `queue.md`'s policy allows, only on the night branch, never pushed. All other mobile-kit-test rules (tests are the contract, implementers never modify tests, capped push-back) apply unchanged — except escalation targets the report, not the user.
 - Never soften the morning report.

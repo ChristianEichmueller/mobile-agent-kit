@@ -1,6 +1,6 @@
 ---
 name: add-agent
-description: "Add a new agent to this kit — describe it, or import an existing agent file from anywhere. Analyzes the current agent pipeline, proposes where the new agent belongs, writes it to the kit's conventions, and wires it into the workflows, the adopt skill, the README and the version. Triggers on: /mobile-kit:add-agent [description or path]"
+description: "Add a new agent to this kit — describe it, or import an existing agent file from anywhere. Analyzes the current agent pipeline, proposes where the new agent belongs, writes it to the kit's conventions, and wires it into the workflows, the adopt skill, the README and the version. Triggers on: /mobile-kit-test:add-agent [description or path]"
 disable-model-invocation: true
 ---
 
@@ -113,7 +113,7 @@ Copy the structure of the existing agents, so the new one reads the project cont
 
 Three things must not be copied:
 
-- **the memory directory** — `.claude/agent-memory/mobile-kit-<name>/` for the whole team, `.claude/agent-memory/<name>/` for one project only. The wrong one means memory nothing reads.
+- **the memory directory** — `.claude/agent-memory/mobile-kit-test-<name>/` for the whole team, `.claude/agent-memory/<name>/` for one project only. The wrong one means memory nothing reads.
 - **the `##` heading** — it must be unused. Grep the skills and agents first.
 - **the name** — it must not collide with an agent in this kit, another plugin, or a built-in (`Explore`, `Plan`, `general-purpose`). The filename stem must equal `name:`.
 

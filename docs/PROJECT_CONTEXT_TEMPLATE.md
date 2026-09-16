@@ -1,8 +1,8 @@
-<!-- mobile-kit context contract — CONTRACT_VERSION: 1 -->
+<!-- mobile-kit-test context contract — CONTRACT_VERSION: 1 -->
 <!--
-This file is the entry point every mobile-kit agent reads before doing anything.
+This file is the entry point every mobile-kit-test agent reads before doing anything.
 Copy it to `.claude/docs/PROJECT_CONTEXT.md` in your project and fill it in,
-or run `/mobile-kit:adopt` to generate it automatically from your codebase.
+or run `/mobile-kit-test:adopt` to generate it automatically from your codebase.
 
 Rules for filling it in:
 - Keep this file SHORT. Link out to detailed docs instead of inlining them.

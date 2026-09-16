@@ -1,10 +1,10 @@
 {
-  "name": "mobile-agent-kit",
-  "description": "Marketplace for the mobile-kit plugin: TDD-style multi-agent orchestration for Android/KMM and Flutter projects.",
+  "name": "mobile-agent-kit-test",
+  "description": "Marketplace for the mobile-kit-test plugin: TDD-style multi-agent orchestration for Android/KMM and Flutter projects.",
   "owner": { "name": "ceichmueller" },
   "plugins": [
     {
-      "name": "mobile-kit",
+      "name": "mobile-kit-test",
       "source": "./",
       "description": "TDD-style multi-agent orchestration kit for mobile projects (Android/KMM, Flutter).",
       "author": { "name": "ceichmueller" }

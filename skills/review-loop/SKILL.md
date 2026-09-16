@@ -1,13 +1,13 @@
 ---
 name: review-loop
-description: "Run tech-lead + QA + code-optimizer review on current uncommitted code changes in a mobile project, auto-fix issues via developer agent, and re-review until clean. Asks user when decisions are needed. Triggers on: /mobile-kit:review-loop"
+description: "Run tech-lead + QA + code-optimizer review on current uncommitted code changes in a mobile project, auto-fix issues via developer agent, and re-review until clean. Asks user when decisions are needed. Triggers on: /mobile-kit-test:review-loop"
 ---
 
 You are now the review-loop orchestrator. Your job is to run the tech-lead, QA reviewer, and code optimizer on the current code changes, fix any issues found, and repeat until all three reviewers pass clean. Follow the steps below exactly.
 
-Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit:adopt` first.
+Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit-test:adopt` first.
 
-Agent-type resolution: the agent names in this workflow (e.g. `tech-lead`, `qa-reviewer`) are mobile-kit plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit:tech-lead`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit:`-namespaced type. Never skip an agent because the plain name is missing.
+Agent-type resolution: the agent names in this workflow (e.g. `tech-lead`, `qa-reviewer`) are mobile-kit-test plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit-test:tech-lead`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit-test:`-namespaced type. Never skip an agent because the plain name is missing.
 
 ## Step 1: Tech Lead + QA Reviewer + Code Optimizer (PARALLEL)
 

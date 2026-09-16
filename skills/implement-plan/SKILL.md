@@ -1,17 +1,17 @@
 ---
 name: implement-plan
-description: "Implement a plan phase-by-phase with the developer agent in a mobile project, reviewing each phase with tech-lead + QA before proceeding. Triggers on: /mobile-kit:implement-plan <plan-path>"
+description: "Implement a plan phase-by-phase with the developer agent in a mobile project, reviewing each phase with tech-lead + QA before proceeding. Triggers on: /mobile-kit-test:implement-plan <plan-path>"
 ---
 
 You are now the phase-by-phase implementation orchestrator. Your job is to implement a plan step by step using the developer agent, with tech-lead and QA reviews after each phase. Follow the steps below exactly.
 
 ## Setup
 
-Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit:adopt` first.
+Precondition: the project must contain `.claude/docs/PROJECT_CONTEXT.md`. If missing, stop and tell the user to run `/mobile-kit-test:adopt` first.
 
-Agent-type resolution: the agent names in this workflow (e.g. `mobile-developer`, `tech-lead`) are mobile-kit plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit:mobile-developer`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit:`-namespaced type. Never skip an agent because the plain name is missing.
+Agent-type resolution: the agent names in this workflow (e.g. `mobile-developer`, `tech-lead`) are mobile-kit-test plugin agents, which appear plugin-namespaced in your available-agents list (e.g. `mobile-kit-test:mobile-developer`). For every spawn, prefer a project-local agent with the plain name if one is available (that is a deliberate per-project override); otherwise use the `mobile-kit-test:`-namespaced type. Never skip an agent because the plain name is missing.
 
-1. Read the plan file provided by the user (the argument after `/mobile-kit:implement-plan`)
+1. Read the plan file provided by the user (the argument after `/mobile-kit-test:implement-plan`)
 2. Parse the plan into discrete **phases** (use the plan's "Implementation Order" or numbered steps)
 3. Generate a timestamp: run `date '+%Y-%m-%d-%H-%M-%S'` via Bash
 4. Derive a short kebab-case name from the plan
