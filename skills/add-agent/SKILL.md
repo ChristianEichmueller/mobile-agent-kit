@@ -6,143 +6,84 @@ disable-model-invocation: true
 
 You are now the agent integrator. You add a new agent to this kit and wire it in so it is actually spawned.
 
-Follow the steps below exactly. You work directly — do not delegate the writing, but you may spawn Explore agents for the analysis in Step 2.
+Work directly — do not delegate the writing. You may spawn Explore agents for the analysis in Step 2.
+
+Ask every question with the **AskUserQuestion** tool, 2 to 4 options. Never ask in plain prose — that ends the turn and looks like the skill stopped. The tool always adds a free-text answer of its own, so the user can always type something you did not list.
 
 ## Before you start
 
 Unlike every other skill in this kit, you do NOT need `.claude/docs/PROJECT_CONTEXT.md`. You work on agent definitions, not on product code.
 
-Find your target instead:
-
-- **Plugin agents** live in the plugin repository — a directory with `.claude-plugin/plugin.json` and `agents/`.
-- **Project agents** live in `<project>/.claude/agents/`.
-
-Never write into the installed plugin cache (`~/.claude/plugins/cache/...`). It is overwritten on every update and keyed by version. If that is the only copy available, say so and continue with Step 4.
-
-The writing target is decided in Step 4. Until then, read only.
-
-## Step 1: ANALYZE — What is missing?
-
-Do this before asking anything.
-
-Read every `agents/*.md` in this kit (frontmatter is enough) and every `skills/*/SKILL.md`: which agent runs in which workflow, at which step, parallel or sequential. Note the `##` headings already taken in the shared context file.
-
-From that, work out **which agents this kit does not have** — real gaps, each one a job no current agent covers. Three or four is plenty.
-
-If the user already passed a description or a path as an argument, you still do this analysis, but skip Step 2 and confirm what you understood.
+Your target is either the plugin repository (a directory with `.claude-plugin/plugin.json` and `agents/`) or a project's `.claude/agents/`. Step 4 decides which. Until then, read only.
 
 ---
 
-## Step 2: ASK — What does the new agent do?
+**1. ASK — What does the new agent do?**
+Answers:
+- "Describe it:"
+- "use an existing agent file"
+    - followed by question "where can i find the existing agent?"
 
-Ask with the gaps you found as the choices, each a concrete agent with a one-line job.
+Read an imported file now. Keep its role — you rewrite everything around it in Step 6.
+If the user passed a description or a path as an argument, skip this step and confirm what you understood.
 
-Say in the question that the user can also type their own description, or a path to an existing agent file. Do not make those into choices — the free-text answer already covers them.
+**2. ANALYZE — Where to locate the new agent?**
+Read the existing agents, the skills, the pipeline. Look for all fitting spots and find the best.
 
-For a path: read the file now. Keep its role — you will rewrite everything around it in Step 6.
+Also note the `##` headings already taken in the shared context file, and check honestly whether an existing agent already does this job.
 
----
+**3. ASK — Where to locate the new agent?**
+Answers:
+- List of spots, each with a reason, one recommended.
+- "somewhere else:"
 
-## Step 3: ASK — Where to locate the new agent?
+Add "Extend `<existing agent>` instead" when Step 2 showed the job is already covered. If you concluded the agent should not exist, say so and recommend that option. The user decides; if they overrule you, build it in full without arguing again.
 
-Using Step 1's map, work out every spot the agent could fit — which workflow, which step, before or after which agent, parallel or sequential — and pick the best. Check honestly whether an existing agent already does this job; `tech-lead`, `qa-reviewer` and `code-optimizer` overlap already, so a fourth reviewer needs a boundary you can state in one sentence.
+**4. ASK — Who will use the agent?**
+Answers:
+- "Only this project" (local file, no release)
+- "the whole team" (goes into the plugin, needs a version bump)
+    - followed by question "You need a copy of the plugin repo. Where is it?"
+      Answers:
+        - "here:" (path)
+        - "create a fork for me" (forks and clones it)
+      Never write into the installed plugin — it is overwritten on every update.
 
-Offer the spots as choices, each with a one-line reason, one recommended.
+Verify the path: it must hold `.claude-plugin/plugin.json` and `agents/`, and the working tree must be clean. This answer decides the memory directory in Step 6.
 
-Add **"Extend `<existing agent>` instead"** when Step 2 showed the job is already covered.
+**5. SHOW — Preview.**
+Show every decision and the files that will be edited. then ask.
+Answers:
+- go
+- adjust
+- cancel
 
-If you concluded the agent should not exist, say so plainly and recommend that option. The user decides. If they overrule you, build it in full without arguing again.
+Decide everything not asked yourself — name, boundary, tools, findings blocking or advisory, memory directory, `##` heading, model — and show all of it here. This is the only place the user sees those decisions. Write nothing before "go".
 
----
+If the agent needs project facts `PROJECT_CONTEXT.md` does not carry, warn separately: it forces a `CONTRACT_VERSION` bump and a re-adopt in every project.
 
-## Step 4: ASK — Who will use the agent?
+**6. WRITE — Write the agent file.**
+Copy the structure of the existing agents, so it reads the project context, has a memory,
+writes to the log, and ends with the phrase the workflow waits for.
 
-Ask, with these answers:
+Do not copy the memory directory, the `##` heading or the name: the memory prefix follows Step 4's scope, the heading must be unused, and the name must not collide with an agent in this kit, another plugin, or a built-in.
 
-- **"Only this project"** — local file, no release
-- **"The whole team"** — goes into the plugin, needs a version bump
+**7. WRITE — Adjust the other files.**
+like Skills, adopt, README, version.
 
-If the answer is "the whole team", you need a copy of the plugin repo — never the installed cache.
+For the workflow skills: the step, the spawn prompt (context file path, what to read, what to produce, which heading to append under), the gate the orchestrator checks afterwards, and the final report row. `orchestrate` and `bug-hunt` each have a full and a fast step list. README and version are plugin scope only.
 
-Look for a clone on disk, then ask which to use: the clones you found, or **"Create a fork for me"** (`gh repo fork <upstream> --clone`; if `gh` is not authenticated, stop and ask the user to log in).
+**8. REPORT — What changed, what is still open.**
+Only this project: done, the agent works now.
+Whole team: user pushes the repo, then everyone runs
+`/plugin marketplace update` and `claude plugin update`.
 
-Verify whichever path you end up with: it must hold `.claude-plugin/plugin.json` and `agents/`, and the working tree must be clean.
-
-This answer decides the memory directory in Step 6, so do not skip it.
-
----
-
-## Step 5: SHOW — Preview
-
-Show every decision and every file that will be edited. Decide these yourself — do not ask:
-
-```
-Agent:     <name>
-Job:       <one line>
-Boundary:  not <agent A> (which does X), not <agent B> (which does Y)
-Spot:      <workflow, step, parallel or sequential>
-Scope:     only this project | the whole team
-Tools:     read-only | full
-Findings:  advisory | blocking
-Memory:    <exact directory>
-Heading:   ## <Heading>
-Model:     opus
-
-Files:
-  + <the agent file>
-  ~ <each workflow, adopt, README, plugin.json>
-```
-
-If the agent needs project facts `PROJECT_CONTEXT.md` does not carry yet, warn separately here: it forces a `CONTRACT_VERSION` bump and a re-`adopt` in every project already using this kit.
-
-Then ask: **go** or **cancel**. Anything else the user says is a correction — apply it and show the preview again.
-
-Write nothing before "go".
-
----
-
-## Step 6: WRITE — Write the agent file
-
-Copy the structure of the existing agents, so the new one reads the project context, has a memory, writes to the log, and ends with the phrase the workflow waits for.
-
-Three things must not be copied:
-
-- **the memory directory** — `.claude/agent-memory/mobile-kit-test-<name>/` for the whole team, `.claude/agent-memory/<name>/` for one project only. The wrong one means memory nothing reads.
-- **the `##` heading** — it must be unused. Grep the skills and agents first.
-- **the name** — it must not collide with an agent in this kit, another plugin, or a built-in (`Explore`, `Plan`, `general-purpose`). The filename stem must equal `name:`.
-
-For an imported file: keep the role body, replace everything around it, and note what you changed.
-
----
-
-## Step 7: WRITE — Adjust the other files
-
-Whatever the spot from Step 3 requires:
-
-- **the workflow skills** — the step, the spawn prompt (context file path, what to read, what to produce, which heading to append under), the gate the orchestrator checks afterwards, the row in the final report table, and `## Rules` if the agent is mandatory. `orchestrate` and `bug-hunt` each have a full and a fast step list — state which ones the agent joins.
-- **`skills/adopt/SKILL.md`** — add the memory directory to Step 4, so it is scaffolded on adoption.
-- **`README.md`** — the agent table, and the skills table if you added a workflow.
-- **`.claude-plugin/plugin.json`** — bump `version`. Without the bump nobody ever receives the agent.
-
-The last two apply to the plugin scope only. A project-local agent needs none of them.
-
----
-
-## Step 8: REPORT — What changed, what is still open
-
-List every file you changed, and every touchpoint as done, skipped with a reason, or needing a decision. Never skip one silently.
-
-- **Only this project:** done — the agent works now. Tell the user to run `/reload-plugins`.
-- **The whole team:** the user pushes the repo, then everyone runs `/plugin marketplace update` and `claude plugin update`.
-
-Say plainly whether the agent has been spawned for real yet. Until a workflow has spawned it once and it has appended its section, the integration is unproven.
-
-Never commit and never push — the user reviews and does that.
+List every file changed and every touchpoint as done, skipped with a reason, or needing a decision. Say plainly whether the agent has been spawned for real yet — until a workflow has spawned it once, the integration is unproven.
 
 ## Rules
 
-- Ask the four questions in order. Do not guess an answer the user has not given.
-- Ask with the question tool, so the user sees choices. Never end a turn on a bare question.
+- Ask with the AskUserQuestion tool. Never end a turn on a bare question.
+- Ask the questions in order. Do not guess an answer the user has not given.
 - Everything not asked is your decision, and all of it is shown in the preview.
 - Write nothing before the user says "go".
 - Never write into the installed plugin cache.
